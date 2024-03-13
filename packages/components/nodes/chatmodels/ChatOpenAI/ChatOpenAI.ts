@@ -242,7 +242,7 @@ class ChatOpenAI_ChatModels implements INode {
         if (presencePenalty) obj.presencePenalty = parseFloat(presencePenalty)
         if (timeout) obj.timeout = parseInt(timeout, 10)
         if (cache) obj.cache = cache
-        if (process.env.PROXY_URL) obj.configuration = {httpAgent: new HttpsProxyAgent(process.env.PROXY_URL)}
+        if (process.env.PROXY_URL) obj.configuration = { httpAgent: new HttpsProxyAgent(process.env.PROXY_URL) }
 
         let parsedBaseOptions: any | undefined = undefined
 
