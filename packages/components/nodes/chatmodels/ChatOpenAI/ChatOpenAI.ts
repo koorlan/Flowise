@@ -5,7 +5,7 @@ import { BaseChatModelParams } from '@langchain/core/language_models/chat_models
 import { ICommonObject, IMultiModalOption, INode, INodeData, INodeParams } from '../../../src/Interface'
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
 import { ChatOpenAI } from './FlowiseChatOpenAI'
-import HttpsProxyAgent from 'https-proxy-agent';
+import HttpsProxyAgent from 'https-proxy-agent'
 
 class ChatOpenAI_ChatModels implements INode {
     label: string
@@ -243,7 +243,6 @@ class ChatOpenAI_ChatModels implements INode {
         if (timeout) obj.timeout = parseInt(timeout, 10)
         if (cache) obj.cache = cache
         if (process.env.PROXY_URL) obj.configuration.httpAgent = new HttpsProxyAgent(process.env.PROXY_URL)
-
 
         let parsedBaseOptions: any | undefined = undefined
 
