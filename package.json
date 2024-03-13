@@ -1,7 +1,7 @@
 {
-    "name": "flowise",
+    "name": "korlan-flowise",
     "version": "1.6.1",
-    "private": true,
+    "private": false,
     "homepage": "https://flowiseai.com",
     "workspaces": [
         "packages/*",
