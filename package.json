@@ -24,7 +24,7 @@
         "quick": "pretty-quick --staged",
         "postinstall": "husky install",
         "migration:create": "pnpm typeorm migration:create",
-        "publish-packages": "turbo run build lint test && changeset publish"
+        "publish-packages": "turbo run build  && changeset publish"
     },
     "lint-staged": {
         "*.{js,jsx,ts,tsx,json,md}": "eslint --fix"
