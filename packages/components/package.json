@@ -1,9 +1,12 @@
 {
-    "name": "flowise-components",
-    "version": "1.6.3",
+    "name": "korlan-flowise-components",
+    "version": "1.6.2",
     "description": "Flowiseai Components",
     "main": "dist/src/index",
     "types": "dist/src/index.d.ts",
+    "publishConfig": {
+        "access": "public"
+    },
     "scripts": {
         "build": "tsc && gulp",
         "dev:gulp": "gulp",

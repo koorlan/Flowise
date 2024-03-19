@@ -242,8 +242,7 @@ class ChatOpenAI_ChatModels implements INode {
         if (presencePenalty) obj.presencePenalty = parseFloat(presencePenalty)
         if (timeout) obj.timeout = parseInt(timeout, 10)
         if (cache) obj.cache = cache
-        if (process.env.PROXY_URL) obj.configuration = { httpAgent: new HttpsProxyAgent(process.env.PROXY_URL) }
-
+       
         let parsedBaseOptions: any | undefined = undefined
 
         if (baseOptions) {
@@ -254,8 +253,12 @@ class ChatOpenAI_ChatModels implements INode {
             }
         }
 
+        obj.configuration = {}
+        if (process.env.PROXY_URL) obj.configuration = {...obj.configuration, httpAgent: new HttpsProxyAgent(process.env.PROXY_URL) }
+
         if (basePath || parsedBaseOptions) {
             obj.configuration = {
+                ...obj.configuration,
                 baseURL: basePath,
                 baseOptions: parsedBaseOptions
             }

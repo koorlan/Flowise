@@ -1,8 +1,10 @@
-import { AzureOpenAIInput, ChatOpenAI, OpenAIChatInput } from '@langchain/openai'
+import { AzureOpenAIInput, ChatOpenAI, OpenAIChatInput, LegacyOpenAIInput } from '@langchain/openai'
+import type { ClientOptions } from 'openai'
 import { BaseCache } from '@langchain/core/caches'
 import { BaseLLMParams } from '@langchain/core/language_models/llms'
 import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { HttpsProxyAgent } from 'https-proxy-agent'
 
 class AzureChatOpenAI_ChatModels implements INode {
     label: string
@@ -122,7 +124,7 @@ class AzureChatOpenAI_ChatModels implements INode {
         const azureOpenAIApiDeploymentName = getCredentialParam('azureOpenAIApiDeploymentName', credentialData, nodeData)
         const azureOpenAIApiVersion = getCredentialParam('azureOpenAIApiVersion', credentialData, nodeData)
 
-        const obj: Partial<AzureOpenAIInput> & BaseLLMParams & Partial<OpenAIChatInput> = {
+        const obj: Partial<AzureOpenAIInput> & BaseLLMParams & Partial<OpenAIChatInput> & { configuration?: ClientOptions & LegacyOpenAIInput } = {
             temperature: parseFloat(temperature),
             modelName,
             azureOpenAIApiKey,
@@ -137,6 +139,7 @@ class AzureChatOpenAI_ChatModels implements INode {
         if (presencePenalty) obj.presencePenalty = parseFloat(presencePenalty)
         if (timeout) obj.timeout = parseInt(timeout, 10)
         if (cache) obj.cache = cache
+        if (process.env.PROXY_URL) obj.configuration = { httpAgent: new HttpsProxyAgent(process.env.PROXY_URL) }
 
         const model = new ChatOpenAI(obj)
         return model

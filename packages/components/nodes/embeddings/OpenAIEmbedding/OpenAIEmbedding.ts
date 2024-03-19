@@ -1,6 +1,8 @@
 import { OpenAIEmbeddings, OpenAIEmbeddingsParams } from '@langchain/openai'
 import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import type { ClientOptions } from 'openai'
+import { HttpsProxyAgent } from 'https-proxy-agent'
 
 class OpenAIEmbedding_Embeddings implements INode {
     label: string
@@ -92,7 +94,7 @@ class OpenAIEmbedding_Embeddings implements INode {
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
         const openAIApiKey = getCredentialParam('openAIApiKey', credentialData, nodeData)
 
-        const obj: Partial<OpenAIEmbeddingsParams> & { openAIApiKey?: string } = {
+        const obj: Partial<OpenAIEmbeddingsParams> & { openAIApiKey?: string } & { configuration?: ClientOptions }= {
             openAIApiKey,
             modelName
         }
@@ -100,6 +102,9 @@ class OpenAIEmbedding_Embeddings implements INode {
         if (stripNewLines) obj.stripNewLines = stripNewLines
         if (batchSize) obj.batchSize = parseInt(batchSize, 10)
         if (timeout) obj.timeout = parseInt(timeout, 10)
+
+        obj.configuration = {}
+        if (process.env.PROXY_URL) obj.configuration = {...obj.configuration, httpAgent: new HttpsProxyAgent(process.env.PROXY_URL) }
 
         const model = new OpenAIEmbeddings(obj, { basePath })
         return model
