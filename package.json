@@ -1,5 +1,5 @@
 {
-    "name": "korlan-flowise",
+    "name": "flowise-proxified",
     "version": "1.6.2",
     "publishConfig": {
         "access": "public"
