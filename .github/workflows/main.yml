@@ -22,12 +22,17 @@ jobs:
         env:
             PUPPETEER_SKIP_DOWNLOAD: true
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
+            - uses: pnpm/action-setup@v2
+              with:
+                  version: 6.32.9
             - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v4
               with:
                   node-version: ${{ matrix.node-version }}
-                  registry-url: 'https://registry.npmjs.org'
+                  check-latest: false
+                  cache: 'pnpm'
+
             - run: npm i -g pnpm
 
             - run: pnpm install --no-frozen-lockfile
