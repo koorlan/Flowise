@@ -29,7 +29,7 @@ import {
     IMessage,
     FlowiseMemory,
     IFileUpload
-} from 'flowise-components'
+} from 'korlan-1-flowise-components'
 import { randomBytes } from 'crypto'
 import { AES, enc } from 'crypto-js'
 

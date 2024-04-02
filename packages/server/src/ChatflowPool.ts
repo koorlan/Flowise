@@ -1,4 +1,4 @@
-import { ICommonObject } from 'flowise-components'
+import { ICommonObject } from 'korlan-1-flowise-components'
 import { IActiveChatflows, INodeData, IReactFlowNode } from './Interface'
 import logger from './utils/logger'
 

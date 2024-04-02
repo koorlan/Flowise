@@ -1,5 +1,5 @@
 {
-    "name": "flowise",
+    "name": "korlan-1-flowise",
     "version": "1.6.2",
     "description": "Flowiseai Server",
     "main": "dist/index",
@@ -61,8 +61,8 @@
         "express": "^4.17.3",
         "express-basic-auth": "^1.2.1",
         "express-rate-limit": "^6.9.0",
-        "flowise-components": "workspace:^",
-        "flowise-ui": "workspace:^",
+        "korlan-1-flowise-components": "workspace:^",
+        "korlan-1-flowise-ui": "workspace:^",
         "lodash": "^4.17.21",
         "moment": "^2.29.3",
         "moment-timezone": "^0.5.34",
