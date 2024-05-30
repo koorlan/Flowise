@@ -4,6 +4,8 @@ import { BaseLLMParams } from '@langchain/core/language_models/llms'
 import { ICommonObject, IMultiModalOption, INode, INodeData, INodeParams } from '../../../src/Interface'
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
 import { ChatOpenAI } from '../ChatOpenAI/FlowiseChatOpenAI'
+import { HttpsProxyAgent } from 'https-proxy-agent'
+import type { ClientOptions } from 'openai'
 
 class AzureChatOpenAI_ChatModels implements INode {
     label: string
@@ -162,7 +164,7 @@ class AzureChatOpenAI_ChatModels implements INode {
         const allowImageUploads = nodeData.inputs?.allowImageUploads as boolean
         const imageResolution = nodeData.inputs?.imageResolution as string
 
-        const obj: Partial<AzureOpenAIInput> & BaseLLMParams & Partial<OpenAIChatInput> = {
+        const obj: Partial<AzureOpenAIInput> & BaseLLMParams & Partial<OpenAIChatInput>  & { configuration?: ClientOptions } = {
             temperature: parseFloat(temperature),
             modelName,
             azureOpenAIApiKey,
@@ -177,6 +179,7 @@ class AzureChatOpenAI_ChatModels implements INode {
         if (presencePenalty) obj.presencePenalty = parseFloat(presencePenalty)
         if (timeout) obj.timeout = parseInt(timeout, 10)
         if (cache) obj.cache = cache
+        if (process.env.PROXY_URL) obj.configuration = { httpAgent: new HttpsProxyAgent(process.env.PROXY_URL) }
 
         const multiModalOption: IMultiModalOption = {
             image: {

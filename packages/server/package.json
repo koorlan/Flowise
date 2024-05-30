@@ -4,6 +4,10 @@
     "description": "Flowiseai Server",
     "main": "dist/index",
     "types": "dist/index.d.ts",
+    "publishConfig": {
+        "access": "public"
+    },
+    "private": false,
     "bin": {
         "flowise": "./bin/run"
     },

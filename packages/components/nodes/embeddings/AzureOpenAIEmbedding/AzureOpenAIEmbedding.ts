@@ -1,6 +1,9 @@
 import { AzureOpenAIInput, OpenAIEmbeddings, OpenAIEmbeddingsParams } from '@langchain/openai'
 import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import type { ClientOptions } from 'openai'
+import { HttpsProxyAgent } from 'https-proxy-agent'
+
 
 class AzureOpenAIEmbedding_Embeddings implements INode {
     label: string
@@ -58,7 +61,7 @@ class AzureOpenAIEmbedding_Embeddings implements INode {
         const azureOpenAIApiDeploymentName = getCredentialParam('azureOpenAIApiDeploymentName', credentialData, nodeData)
         const azureOpenAIApiVersion = getCredentialParam('azureOpenAIApiVersion', credentialData, nodeData)
 
-        const obj: Partial<OpenAIEmbeddingsParams> & Partial<AzureOpenAIInput> = {
+        const obj: Partial<OpenAIEmbeddingsParams> & Partial<AzureOpenAIInput>  & { configuration?: ClientOptions }= {
             azureOpenAIApiKey,
             azureOpenAIApiInstanceName,
             azureOpenAIApiDeploymentName,
@@ -67,7 +70,8 @@ class AzureOpenAIEmbedding_Embeddings implements INode {
 
         if (batchSize) obj.batchSize = parseInt(batchSize, 10)
         if (timeout) obj.timeout = parseInt(timeout, 10)
-
+        obj.configuration = {}
+        if (process.env.PROXY_URL) obj.configuration = {...obj.configuration, httpAgent: new HttpsProxyAgent(process.env.PROXY_URL) }
         const model = new OpenAIEmbeddings(obj)
         return model
     }

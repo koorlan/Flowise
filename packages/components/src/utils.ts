@@ -44,6 +44,7 @@ export const availableDependencies = [
     'google-auth-library',
     'graphql',
     'html-to-text',
+    'https-proxy-agent',
     'ioredis',
     'langchain',
     'langfuse',

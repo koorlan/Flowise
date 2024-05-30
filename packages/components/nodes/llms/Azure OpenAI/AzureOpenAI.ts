@@ -3,6 +3,8 @@ import { BaseCache } from '@langchain/core/caches'
 import { BaseLLMParams } from '@langchain/core/language_models/llms'
 import { ICommonObject, INode, INodeData, INodeParams } from '../../../src/Interface'
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { HttpsProxyAgent } from 'https-proxy-agent'
+import type { ClientOptions } from 'openai'
 
 class AzureOpenAI_LLMs implements INode {
     label: string
@@ -181,7 +183,7 @@ class AzureOpenAI_LLMs implements INode {
 
         const cache = nodeData.inputs?.cache as BaseCache
 
-        const obj: Partial<AzureOpenAIInput> & BaseLLMParams & Partial<OpenAIInput> = {
+        const obj: Partial<AzureOpenAIInput> & BaseLLMParams & Partial<OpenAIInput> & { configuration?: ClientOptions } = {
             temperature: parseFloat(temperature),
             modelName,
             azureOpenAIApiKey,
@@ -198,7 +200,8 @@ class AzureOpenAI_LLMs implements INode {
         if (timeout) obj.timeout = parseInt(timeout, 10)
         if (bestOf) obj.bestOf = parseInt(bestOf, 10)
         if (cache) obj.cache = cache
-
+        if (process.env.PROXY_URL) obj.configuration = { httpAgent: new HttpsProxyAgent(process.env.PROXY_URL) }
+        
         const model = new OpenAI(obj)
         return model
     }
