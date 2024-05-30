@@ -1,11 +1,12 @@
 import { AzureOpenAIInput, ChatOpenAI as LangchainChatOpenAI, OpenAIChatInput } from '@langchain/openai'
 import { BaseCache } from '@langchain/core/caches'
 import { BaseLLMParams } from '@langchain/core/language_models/llms'
-import { ICommonObject, IMultiModalOption, INode, INodeData, INodeParams } from '../../../src/Interface'
+import { ICommonObject, IMultiModalOption, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
 import { ChatOpenAI } from '../ChatOpenAI/FlowiseChatOpenAI'
 import { HttpsProxyAgent } from 'https-proxy-agent'
 import type { ClientOptions } from 'openai'
+import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
 
 class AzureChatOpenAI_ChatModels implements INode {
     label: string
@@ -22,7 +23,7 @@ class AzureChatOpenAI_ChatModels implements INode {
     constructor() {
         this.label = 'Azure ChatOpenAI'
         this.name = 'azureChatOpenAI'
-        this.version = 3.0
+        this.version = 4.0
         this.type = 'AzureChatOpenAI'
         this.icon = 'Azure.svg'
         this.category = 'Chat Models'
@@ -44,31 +45,8 @@ class AzureChatOpenAI_ChatModels implements INode {
             {
                 label: 'Model Name',
                 name: 'modelName',
-                type: 'options',
-                options: [
-                    {
-                        label: 'gpt-4',
-                        name: 'gpt-4'
-                    },
-                    {
-                        label: 'gpt-4-32k',
-                        name: 'gpt-4-32k'
-                    },
-                    {
-                        label: 'gpt-35-turbo',
-                        name: 'gpt-35-turbo'
-                    },
-                    {
-                        label: 'gpt-35-turbo-16k',
-                        name: 'gpt-35-turbo-16k'
-                    },
-                    {
-                        label: 'gpt-4-vision-preview',
-                        name: 'gpt-4-vision-preview'
-                    }
-                ],
-                default: 'gpt-35-turbo',
-                optional: true
+                type: 'asyncOptions',
+                loadMethod: 'listModels'
             },
             {
                 label: 'Temperature',
@@ -83,6 +61,14 @@ class AzureChatOpenAI_ChatModels implements INode {
                 name: 'maxTokens',
                 type: 'number',
                 step: 1,
+                optional: true,
+                additionalParams: true
+            },
+            {
+                label: 'Top Probability',
+                name: 'topP',
+                type: 'number',
+                step: 0.1,
                 optional: true,
                 additionalParams: true
             },
@@ -145,6 +131,13 @@ class AzureChatOpenAI_ChatModels implements INode {
         ]
     }
 
+    //@ts-ignore
+    loadMethods = {
+        async listModels(): Promise<INodeOptionsValue[]> {
+            return await getModels(MODEL_TYPE.CHAT, 'azureChatOpenAI')
+        }
+    }
+
     async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
         const modelName = nodeData.inputs?.modelName as string
         const temperature = nodeData.inputs?.temperature as string
@@ -154,6 +147,7 @@ class AzureChatOpenAI_ChatModels implements INode {
         const timeout = nodeData.inputs?.timeout as string
         const streaming = nodeData.inputs?.streaming as boolean
         const cache = nodeData.inputs?.cache as BaseCache
+        const topP = nodeData.inputs?.topP as string
 
         const credentialData = await getCredentialData(nodeData.credential ?? '', options)
         const azureOpenAIApiKey = getCredentialParam('azureOpenAIApiKey', credentialData, nodeData)
@@ -180,6 +174,7 @@ class AzureChatOpenAI_ChatModels implements INode {
         if (timeout) obj.timeout = parseInt(timeout, 10)
         if (cache) obj.cache = cache
         if (process.env.PROXY_URL) obj.configuration = { httpAgent: new HttpsProxyAgent(process.env.PROXY_URL) }
+        if (topP) obj.topP = parseFloat(topP)
 
         const multiModalOption: IMultiModalOption = {
             image: {
